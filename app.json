@@ -1,0 +1,16 @@
+{
+  "expo": {
+    "name": "花占い",
+    "slug": "hana-uranai",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "scheme": "hana-uranai",
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "com.yourname.hanauranai"
+    },
+    "plugins": [
+      "expo-router"
+    ]
+  }
+}
