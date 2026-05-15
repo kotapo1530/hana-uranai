@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "花占い",
+    "name": "花占いclaudecode",
     "slug": "hana-uranai",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -10,7 +10,9 @@
       "bundleIdentifier": "com.yourname.hanauranai"
     },
     "plugins": [
-      "expo-router"
+      "expo-router",
+      "expo-asset",
+      "expo-font"
     ]
   }
 }

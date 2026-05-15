@@ -1,24 +1,51 @@
 import { useEffect, useState } from 'react'
-import { View, Text, TouchableOpacity, ScrollView, ActivityIndicator } from 'react-native'
+import { View, Text, TouchableOpacity, ScrollView, ActivityIndicator, Animated } from 'react-native'
 import { useRouter } from 'expo-router'
-import { loadUserProfile } from '../src/lib/storage'
+import { loadUserProfile, hasRevealedToday, markRevealedToday } from '../src/lib/storage'
 import { selectFlower } from '../src/lib/flowerSelector'
-import { Flower } from '../src/data/flowers'
+import { FLOWERS, Flower } from '../src/data/flowers'
 import { FlowerCard } from '../src/components/FlowerCard'
 import { FortunePreview } from '../src/components/FortunePreview'
 
 export default function Home() {
   const router = useRouter()
   const [flower, setFlower] = useState<Flower | null>(null)
+  const [revealed, setRevealed] = useState(false)
+  const [loading, setLoading] = useState(true)
+  const contentOpacity = useState(new Animated.Value(0))[0]
 
   useEffect(() => {
-    loadUserProfile().then(profile => {
+    ;(async () => {
+      const profile = await loadUserProfile()
       if (!profile) { router.replace('/onboarding'); return }
       setFlower(selectFlower(profile, new Date()))
-    })
+      // 開発中は常にボタンから始める
+      const alreadyRevealed = __DEV__ ? false : await hasRevealedToday()
+      setRevealed(alreadyRevealed)
+      if (alreadyRevealed) showContent()
+      setLoading(false)
+    })()
   }, [])
 
-  if (!flower) {
+  const showContent = () => {
+    Animated.timing(contentOpacity, {
+      toValue: 1,
+      duration: 600,
+      useNativeDriver: true,
+    }).start()
+  }
+
+  const handleReveal = async () => {
+    if (__DEV__) {
+      const random = FLOWERS[Math.floor(Math.random() * FLOWERS.length)]
+      setFlower(random)
+    }
+    await markRevealedToday()
+    setRevealed(true)
+    showContent()
+  }
+
+  if (loading || !flower) {
     return (
       <View className="flex-1 bg-gray-950 items-center justify-center">
         <ActivityIndicator color="#fb7185" />
@@ -26,8 +53,40 @@ export default function Home() {
     )
   }
 
+  if (!revealed) {
+    return (
+      <View className="flex-1 bg-gray-950 items-center justify-center px-8">
+        <Text className="text-gray-500 text-center text-sm mb-12">
+          {new Date().toLocaleDateString('ja-JP', { month: 'long', day: 'numeric', weekday: 'long' })}
+        </Text>
+
+        <View className="w-40 h-40 rounded-full bg-gray-900 items-center justify-center mb-12 border border-gray-700">
+          <Text style={{ fontSize: 64 }}>🔮</Text>
+        </View>
+
+        <Text className="text-gray-300 text-center text-base mb-2">今日のあなたに贈る花は</Text>
+        <Text className="text-gray-500 text-center text-sm mb-16">ボタンを押して運命を解き明かして</Text>
+
+        <TouchableOpacity
+          onPress={handleReveal}
+          className="w-full bg-rose-900 rounded-full py-5 items-center border border-rose-700"
+        >
+          <Text className="text-rose-100 text-lg font-semibold">✨ 今日の花を占う</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity onPress={() => router.push('/settings')} className="mt-8">
+          <Text className="text-gray-600 text-sm">設定</Text>
+        </TouchableOpacity>
+      </View>
+    )
+  }
+
   return (
-    <ScrollView className="flex-1 bg-gray-950" contentContainerStyle={{ paddingTop: 80, paddingBottom: 40 }}>
+    <Animated.ScrollView
+      style={{ opacity: contentOpacity }}
+      className="flex-1 bg-gray-950"
+      contentContainerStyle={{ paddingTop: 80, paddingBottom: 40 }}
+    >
       <Text className="text-gray-500 text-center text-sm mb-8">
         {new Date().toLocaleDateString('ja-JP', { month: 'long', day: 'numeric', weekday: 'long' })}
       </Text>
@@ -42,12 +101,9 @@ export default function Home() {
         <Text className="text-rose-100 text-base font-semibold">詳細の占いを見る ✨</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity
-        onPress={() => router.push('/settings')}
-        className="mt-4 items-center"
-      >
+      <TouchableOpacity onPress={() => router.push('/settings')} className="mt-4 items-center">
         <Text className="text-gray-600 text-sm">設定</Text>
       </TouchableOpacity>
-    </ScrollView>
+    </Animated.ScrollView>
   )
 }

@@ -22,13 +22,17 @@ export default function Detail() {
   const [access, setAccess] = useState<AccessState>('loading')
 
   useFocusEffect(
-    useCallback(() => { checkAccess() }, [])
+    useCallback(() => {
+      if (access === 'loading') checkAccess()
+    }, [access])
   )
 
   const checkAccess = async () => {
     const profile = await loadUserProfile()
     if (!profile) { router.replace('/onboarding'); return }
     setFlower(selectFlower(profile, new Date()))
+
+    if (__DEV__) { setAccess('unlocked'); return }
 
     const subscribed = await isSubscribed()
     if (subscribed) { setAccess('unlocked'); return }

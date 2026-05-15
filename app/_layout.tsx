@@ -1,11 +1,9 @@
 import { useEffect } from 'react'
 import { Stack } from 'expo-router'
 import { initializePurchases } from '../src/lib/purchaseManager'
-import '../global.css'
-
 export default function RootLayout() {
   useEffect(() => {
-    initializePurchases()
+    initializePurchases().catch(() => {})
   }, [])
 
   return (
