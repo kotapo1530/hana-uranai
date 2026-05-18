@@ -1,16 +1,22 @@
 import Purchases, { PurchasesPackage } from 'react-native-purchases'
 import { addTickets } from './storage'
 
-const API_KEY = 'YOUR_REVENUECAT_API_KEY'
+const API_KEY = 'test_CQCTPGmHjYcoanljuqbvhsEnogh'
 
 export const ENTITLEMENT_ID = 'monthly_subscription'
 export const PRODUCT_TICKET = 'ticket_120'
 
 export async function initializePurchases(): Promise<void> {
-  Purchases.configure({ apiKey: API_KEY })
+  if (__DEV__) return
+  try {
+    Purchases.configure({ apiKey: API_KEY })
+  } catch {
+    // Native module unavailable
+  }
 }
 
 export async function isSubscribed(): Promise<boolean> {
+  if (__DEV__) return false
   try {
     const customerInfo = await Purchases.getCustomerInfo()
     return customerInfo.entitlements.active[ENTITLEMENT_ID] !== undefined
@@ -20,6 +26,7 @@ export async function isSubscribed(): Promise<boolean> {
 }
 
 export async function getOfferings(): Promise<PurchasesPackage[]> {
+  if (__DEV__) return []
   try {
     const offerings = await Purchases.getOfferings()
     return offerings.current?.availablePackages ?? []

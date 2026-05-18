@@ -5,6 +5,7 @@ const KEYS = {
   USER_PROFILE: 'user_profile',
   TICKET_COUNT: 'ticket_count',
   LAST_REVEALED_DATE: 'last_revealed_date',
+  FIRST_LAUNCH_GIFTED: 'first_launch_gifted',
 }
 
 export async function saveUserProfile(profile: UserProfile): Promise<void> {
@@ -45,4 +46,12 @@ export async function hasRevealedToday(): Promise<boolean> {
 
 export async function markRevealedToday(): Promise<void> {
   await AsyncStorage.setItem(KEYS.LAST_REVEALED_DATE, todayString())
+}
+
+export async function isFirstLaunchGifted(): Promise<boolean> {
+  return (await AsyncStorage.getItem(KEYS.FIRST_LAUNCH_GIFTED)) === 'true'
+}
+
+export async function markFirstLaunchGifted(): Promise<void> {
+  await AsyncStorage.setItem(KEYS.FIRST_LAUNCH_GIFTED, 'true')
 }

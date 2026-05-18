@@ -75,7 +75,7 @@ export function FlowerCard({ flower }: Props) {
           transform: [{ scale: circleScale }],
           opacity: circleOpacity,
         }}
-        className="w-40 h-40 rounded-full bg-gray-800 items-center justify-center mb-6 border border-gray-700"
+        className="w-40 h-40 rounded-full bg-rose-50 items-center justify-center mb-6 border border-rose-200"
       >
         <Text style={{ fontSize: 80 }}>{flower.emoji}</Text>
       </Animated.View>
@@ -83,7 +83,7 @@ export function FlowerCard({ flower }: Props) {
       {/* 花の名前 */}
       <Animated.Text
         style={{ opacity: nameOpacity, transform: [{ translateY: nameTranslateY }] }}
-        className="text-white text-2xl font-serif mb-1"
+        className="text-gray-800 text-2xl font-serif mb-1"
       >
         {flower.name}
       </Animated.Text>
@@ -99,9 +99,9 @@ export function FlowerCard({ flower }: Props) {
       {/* 花言葉バッジ */}
       <Animated.View
         style={{ opacity: badgeOpacity, transform: [{ translateY: badgeTranslateY }] }}
-        className="px-6 py-3 bg-gray-800 rounded-2xl border border-gray-700"
+        className="px-6 py-3 bg-rose-50 rounded-2xl border border-rose-200"
       >
-        <Text className="text-rose-300 text-center text-sm">
+        <Text className="text-rose-600 text-center text-sm">
           花言葉：{flower.flowerLanguage}
         </Text>
       </Animated.View>

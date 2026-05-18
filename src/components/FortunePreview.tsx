@@ -1,14 +1,13 @@
 import { View, Text } from 'react-native'
-import { Flower } from '../data/flowers'
 
-type Props = { flower: Flower }
+type Props = { message: string }
 
-export function FortunePreview({ flower }: Props) {
+export function FortunePreview({ message }: Props) {
   return (
-    <View className="px-6 py-5 bg-gray-900 rounded-2xl border border-gray-700 mx-4">
-      <Text className="text-gray-400 text-xs mb-2 text-center">今日のメッセージ</Text>
-      <Text className="text-white text-center text-base leading-relaxed">
-        {flower.freeText}
+    <View className="px-6 py-5 bg-white rounded-2xl border border-rose-100 mx-4" style={{ shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.06, shadowRadius: 4, elevation: 2 }}>
+      <Text className="text-gray-500 text-xs mb-2 text-center">今日のメッセージ</Text>
+      <Text className="text-gray-700 text-center text-base leading-relaxed">
+        {message}
       </Text>
     </View>
   )
