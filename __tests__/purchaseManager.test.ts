@@ -48,16 +48,18 @@ describe('purchaseManager', () => {
     it('availablePackagesを返す', async () => {
       const mockPkg = { identifier: '$rc_monthly' } as any
       ;(Purchases.getOfferings as jest.Mock).mockResolvedValueOnce({
-        current: { availablePackages: [mockPkg] },
+        current: { identifier: 'default', availablePackages: [mockPkg] },
       })
       const result = await getOfferings()
-      expect(result).toEqual([mockPkg])
+      expect(result.packages).toEqual([mockPkg])
+      expect(result.error).toBeUndefined()
     })
 
-    it('エラー時は空配列を返す', async () => {
-      ;(Purchases.getOfferings as jest.Mock).mockRejectedValueOnce(new Error('network'))
+    it('エラー時は空配列とエラーメッセージを返す', async () => {
+      ;(Purchases.getOfferings as jest.Mock).mockRejectedValueOnce(new Error('network error'))
       const result = await getOfferings()
-      expect(result).toEqual([])
+      expect(result.packages).toEqual([])
+      expect(result.error).toBe('network error')
     })
   })
 

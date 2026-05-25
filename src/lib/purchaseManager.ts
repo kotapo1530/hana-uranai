@@ -18,17 +18,22 @@ export async function isSubscribed(): Promise<boolean> {
   try {
     const customerInfo = await Purchases.getCustomerInfo()
     return customerInfo.entitlements.active[ENTITLEMENT_ID] !== undefined
-  } catch {
+  } catch (e) {
+    console.error('[RevenueCat] isSubscribed error:', e)
     return false
   }
 }
 
-export async function getOfferings(): Promise<PurchasesPackage[]> {
+export async function getOfferings(): Promise<{ packages: PurchasesPackage[]; error?: string }> {
   try {
     const offerings = await Purchases.getOfferings()
-    return offerings.current?.availablePackages ?? []
-  } catch {
-    return []
+    console.log('[RevenueCat] offerings.current:', offerings.current?.identifier ?? 'null')
+    console.log('[RevenueCat] availablePackages:', offerings.current?.availablePackages?.length ?? 0)
+    return { packages: offerings.current?.availablePackages ?? [] }
+  } catch (e: any) {
+    const msg = e?.message ?? String(e)
+    console.error('[RevenueCat] getOfferings error:', msg)
+    return { packages: [], error: msg }
   }
 }
 
