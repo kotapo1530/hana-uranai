@@ -1,5 +1,10 @@
 import AsyncStorage from '@react-native-async-storage/async-storage'
-import { saveUserProfile, loadUserProfile, getTicketCount, consumeTicket, addTickets } from '../src/lib/storage'
+import {
+  saveUserProfile, loadUserProfile,
+  getTicketCount, consumeTicket, addTickets,
+  hasRevealedToday, markRevealedToday,
+  isFirstLaunchGifted, markFirstLaunchGifted,
+} from '../src/lib/storage'
 
 jest.mock('@react-native-async-storage/async-storage', () =>
   require('@react-native-async-storage/async-storage/jest/async-storage-mock')
@@ -43,5 +48,29 @@ describe('storage', () => {
   it('チケットが0の場合はconsumeTicketがfalseを返す', async () => {
     const result = await consumeTicket()
     expect(result).toBe(false)
+  })
+
+  it('markRevealedToday後にhasRevealedTodayがtrueを返す', async () => {
+    await markRevealedToday()
+    expect(await hasRevealedToday()).toBe(true)
+  })
+
+  it('保存前はhasRevealedTodayがfalseを返す', async () => {
+    expect(await hasRevealedToday()).toBe(false)
+  })
+
+  it('markFirstLaunchGifted後にisFirstLaunchGiftedがtrueを返す', async () => {
+    await markFirstLaunchGifted()
+    expect(await isFirstLaunchGifted()).toBe(true)
+  })
+
+  it('初回ギフト未付与の場合はfalseを返す', async () => {
+    expect(await isFirstLaunchGifted()).toBe(false)
+  })
+
+  it('チケットを複数回追加できる', async () => {
+    await addTickets(1)
+    await addTickets(2)
+    expect(await getTicketCount()).toBe(3)
   })
 })
