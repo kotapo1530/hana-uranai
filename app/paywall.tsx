@@ -9,14 +9,10 @@ export default function Paywall() {
   const [packages, setPackages] = useState<PurchasesPackage[]>([])
   const [loading, setLoading] = useState(true)
   const [purchasing, setPurchasing] = useState(false)
-  const [offeringsError, setOfferingsError] = useState<string | undefined>()
-
   const fetchOfferings = () => {
     setLoading(true)
-    setOfferingsError(undefined)
     getOfferings().then(result => {
       setPackages(result.packages)
-      setOfferingsError(result.error)
       setLoading(false)
     })
   }
@@ -65,10 +61,7 @@ export default function Paywall() {
         <View className="flex-1 items-center justify-center">
           <Text style={{ fontSize: 40 }} className="mb-4">🌸</Text>
           <Text className="text-gray-600 text-base font-semibold mb-2">プランを読み込めませんでした</Text>
-          <Text className="text-gray-400 text-sm text-center mb-2">通信環境をご確認のうえ{'\n'}もう一度お試しください</Text>
-          {offeringsError && (
-            <Text style={{ fontSize: 10, color: '#aaa', textAlign: 'center', marginBottom: 16, paddingHorizontal: 16 }}>{offeringsError}</Text>
-          )}
+          <Text className="text-gray-400 text-sm text-center mb-8">通信環境をご確認のうえ{'\n'}もう一度お試しください</Text>
           <TouchableOpacity onPress={fetchOfferings} className="bg-rose-500 px-8 py-3 rounded-full">
             <Text className="text-white font-semibold">再試行</Text>
           </TouchableOpacity>
